@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Dashboard</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <h1>🎓 My Dashboard</h1>
+        <div><a href="#" id="logoutLink">Logout</a></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2 id="welcomeMsg">My Academic Record</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="value" id="overallPercentage">--%</div>
+                    <div class="label">Overall Percentage</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value" id="attendancePercentage">--%</div>
+                    <div class="label">Attendance</div>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr><th>Semester</th><th>Subject</th><th>Marks</th><th>Grade</th></tr>
+                </thead>
+                <tbody id="marksTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/guard.js"></script>
+    <script>
+        requireRole('student');
+        const session = DB.getSession();
+
+        document.getElementById('welcomeMsg').textContent = `Welcome, ${session.name}`;
+        document.getElementById('overallPercentage').textContent =
+            DB.getOverallPercentage(session.studentId).toFixed(1) + '%';
+        document.getElementById('attendancePercentage').textContent =
+            DB.getAttendancePercentage(session.studentId).toFixed(1) + '%';
+
+        const marks = DB.getMarksByStudent(session.studentId);
+        const tbody = document.getElementById('marksTableBody');
+
+        if (marks.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4">No marks recorded yet.</td></tr>';
+        } else {
+            marks.forEach(m => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${m.semester}</td>
+                    <td>${m.subject}</td>
+                    <td>${m.marksObtained} / ${m.maxMarks}</td>
+                    <td>${m.grade}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        document.getElementById('logoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            DB.clearSession();
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manage Students</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <h1>🎓 Manage Students</h1>
+        <div><a href="admin-dashboard.html">Dashboard</a> <a href="#" id="logoutLink">Logout</a></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="search-bar">
+                <input type="text" id="searchBox" placeholder="Search by student name...">
+                <button onclick="searchStudents()">Search</button>
+                <button class="btn-secondary" onclick="loadStudents()">Reset</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Name</th><th>Email</th><th>Phone</th>
+                        <th>Course</th><th>Status</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/guard.js"></script>
+    <script>
+        requireRole('admin');
+
+        function loadStudents() { renderStudents(DB.getAllStudents()); }
+        function searchStudents() { renderStudents(DB.searchStudents(document.getElementById('searchBox').value)); }
+
+        function renderStudents(students) {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '';
+
+            if (students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7">No students found.</td></tr>';
+                return;
+            }
+
+            students.forEach(s => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${s.studentId}</td>
+                    <td>${s.fullName}</td>
+                    <td>${s.email}</td>
+                    <td>${s.phone || '-'}</td>
+                    <td>${s.courseName || '-'}</td>
+                    <td>${s.status}</td>
+                    <td class="actions">
+                        <a href="edit-student.html?id=${s.studentId}" class="btn" style="padding:6px 12px; font-size:12px;">Edit</a>
+                        <button class="btn-danger" onclick="deleteStudent(${s.studentId})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function deleteStudent(id) {
+            if (!confirm('Delete this student record?')) return;
+            DB.deleteStudent(id);
+            loadStudents();
+        }
+
+        loadStudents();
+
+        document.getElementById('logoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            DB.clearSession();
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

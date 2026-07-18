@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login - Student Management System</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <h1>🎓 Student Management System</h1>
+        <div><a href="index.html">Home</a></div>
+    </div>
+
+    <div class="container">
+        <div class="card auth-card">
+            <h2>Login</h2>
+
+            <label>Login as</label>
+            <select id="role">
+                <option value="student">Student</option>
+                <option value="admin">Admin</option>
+            </select>
+
+            <form id="loginForm">
+                <label id="userLabel">Email</label>
+                <input type="text" id="username" required>
+
+                <label>Password</label>
+                <input type="password" id="password" required>
+
+                <button type="submit">Login</button>
+                <div class="error-msg" id="errorMsg"></div>
+                <div class="success-msg" id="successMsg"></div>
+            </form>
+
+            <p style="margin-top:16px; font-size:13px; color:#64748b;">
+                New student? <a href="register.html">Register here</a>
+            </p>
+            <p style="margin-top:6px; font-size:12px; color:#94a3b8;">
+                Demo admin — username: <b>admin</b>, password: <b>admin123</b><br>
+                Demo student — email: <b>aditi@example.com</b>, password: <b>demo123</b>
+            </p>
+        </div>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script>
+        const roleSelect = document.getElementById('role');
+        const userLabel = document.getElementById('userLabel');
+
+        roleSelect.addEventListener('change', () => {
+            userLabel.textContent = roleSelect.value === 'admin' ? 'Username' : 'Email';
+        });
+
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('registered') === 'true') {
+            document.getElementById('successMsg').textContent = 'Registration successful! Please log in.';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const role = roleSelect.value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorBox = document.getElementById('errorMsg');
+            errorBox.textContent = '';
+
+            if (role === 'admin') {
+                if (await DB.adminLogin(username, password)) {
+                    DB.setSession({ role: 'admin', username });
+                    window.location.href = 'admin-dashboard.html';
+                } else {
+                    errorBox.textContent = 'Invalid admin credentials.';
+                }
+            } else {
+                const student = await DB.studentLogin(username, password);
+                if (student) {
+                    DB.setSession({ role: 'student', studentId: student.studentId, name: student.fullName });
+                    window.location.href = 'student-dashboard.html';
+                } else {
+                    errorBox.textContent = 'Invalid email or password.';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

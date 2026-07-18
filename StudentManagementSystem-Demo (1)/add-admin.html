@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Add Admin</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <h1>🎓 Add Admin</h1>
+        <div><a href="admin-dashboard.html">Dashboard</a> <a href="#" id="logoutLink">Logout</a></div>
+    </div>
+
+    <div class="container">
+        <div class="card auth-card">
+            <h2>Create a New Admin Account</h2>
+            <p style="font-size:13px; color:#64748b; margin-bottom:10px;">
+                Only accessible to users already logged in as admin.
+            </p>
+
+            <form id="addAdminForm">
+                <label>Full Name</label>
+                <input type="text" id="fullName" required>
+
+                <label>Username</label>
+                <input type="text" id="username" required>
+
+                <label>Password</label>
+                <input type="password" id="password" minlength="6" required>
+
+                <button type="submit">Create Admin</button>
+                <div class="error-msg" id="errorMsg"></div>
+                <div class="success-msg" id="successMsg"></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/guard.js"></script>
+    <script>
+        requireRole('admin');
+
+        document.getElementById('addAdminForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const errorBox = document.getElementById('errorMsg');
+            const successBox = document.getElementById('successMsg');
+            errorBox.textContent = '';
+            successBox.textContent = '';
+
+            const password = document.getElementById('password').value;
+            if (password.length < 6) {
+                errorBox.textContent = 'Password must be at least 6 characters.';
+                return;
+            }
+
+            const result = await DB.addAdmin({
+                fullName: document.getElementById('fullName').value,
+                username: document.getElementById('username').value,
+                password
+            });
+
+            if (result.success) {
+                successBox.textContent = 'Admin account created successfully.';
+                this.reset();
+            } else {
+                errorBox.textContent = result.message;
+            }
+        });
+
+        document.getElementById('logoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            DB.clearSession();
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

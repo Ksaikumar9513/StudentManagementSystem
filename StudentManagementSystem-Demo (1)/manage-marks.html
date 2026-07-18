@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manage Marks</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <h1>🎓 Manage Marks</h1>
+        <div><a href="admin-dashboard.html">Dashboard</a> <a href="#" id="logoutLink">Logout</a></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Add Marks</h2>
+            <form id="marksForm">
+                <label>Student ID</label>
+                <input type="number" id="studentId" required>
+
+                <label>Subject</label>
+                <input type="text" id="subject" required>
+
+                <label>Semester</label>
+                <input type="number" id="semester" min="1" max="8" required>
+
+                <label>Marks Obtained</label>
+                <input type="number" step="0.01" id="marksObtained" required>
+
+                <label>Max Marks</label>
+                <input type="number" step="0.01" id="maxMarks" value="100" required>
+
+                <button type="submit">Save Marks</button>
+                <div class="success-msg" id="msg"></div>
+            </form>
+        </div>
+
+        <div class="card">
+            <p style="font-size:13px; color:#64748b;">
+                Tip: use Student ID <b>1</b> (Aditi Sharma) or <b>2</b> (Rahul Verma) to see it
+                reflected instantly on the student dashboard.
+            </p>
+        </div>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/guard.js"></script>
+    <script>
+        requireRole('admin');
+
+        document.getElementById('marksForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            DB.addMarks({
+                studentId: Number(document.getElementById('studentId').value),
+                subject: document.getElementById('subject').value,
+                semester: Number(document.getElementById('semester').value),
+                marksObtained: Number(document.getElementById('marksObtained').value),
+                maxMarks: Number(document.getElementById('maxMarks').value)
+            });
+            document.getElementById('msg').textContent = 'Marks saved!';
+            this.reset();
+            document.getElementById('maxMarks').value = 100;
+        });
+
+        document.getElementById('logoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            DB.clearSession();
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

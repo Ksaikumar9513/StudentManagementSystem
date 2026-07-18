@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <h1>🎓 Admin Dashboard</h1>
+        <div><a href="#" id="logoutLink">Logout</a></div>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-box"><div class="value" id="totalStudents">--</div><div class="label">Total Students</div></div>
+            <div class="stat-box"><div class="value" id="totalCourses">--</div><div class="label">Courses Offered</div></div>
+            <div class="stat-box"><div class="value" id="activeStudents">--</div><div class="label">Active Students</div></div>
+        </div>
+
+        <div class="dashboard-links">
+            <a href="view-students.html">👥 Manage Students</a>
+            <a href="manage-courses.html">📚 Manage Courses</a>
+            <a href="manage-marks.html">📊 Manage Marks & Grades</a>
+            <a href="attendance.html">🗓️ Mark Attendance</a>
+            <a href="add-admin.html">➕ Add Admin</a>
+            <a href="change-credentials.html">🔐 Change My Credentials</a>
+        </div>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/guard.js"></script>
+    <script>
+        requireRole('admin');
+
+        const students = DB.getAllStudents();
+        document.getElementById('totalStudents').textContent = students.length;
+        document.getElementById('activeStudents').textContent = students.filter(s => s.status === 'ACTIVE').length;
+        document.getElementById('totalCourses').textContent = DB.getAllCourses().length;
+
+        document.getElementById('logoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            DB.clearSession();
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Register - Student Management System</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <h1>🎓 Student Management System</h1>
+        <div><a href="index.html">Home</a> <a href="login.html">Login</a></div>
+    </div>
+
+    <div class="container">
+        <div class="card auth-card">
+            <h2>Student Registration</h2>
+
+            <form id="registerForm">
+                <label>Full Name</label>
+                <input type="text" id="fullName" required>
+
+                <label>Email</label>
+                <input type="email" id="email" required>
+
+                <label>Password</label>
+                <input type="password" id="password" minlength="6" required>
+
+                <label>Phone Number</label>
+                <input type="tel" id="phone" pattern="[0-9]{10}" placeholder="10-digit number" required>
+
+                <label>Gender</label>
+                <select id="gender" required>
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <label>Address</label>
+                <textarea id="address" rows="2"></textarea>
+
+                <label>Course</label>
+                <select id="courseId" required>
+                    <option value="">Loading courses...</option>
+                </select>
+
+                <button type="submit">Register</button>
+                <div class="error-msg" id="formError"></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script>
+        // Populate course dropdown from the (mock) database
+        const courseSelect = document.getElementById('courseId');
+        courseSelect.innerHTML = '';
+        DB.getAllCourses().forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.courseId;
+            opt.textContent = `${c.courseName} (${c.courseCode})`;
+            courseSelect.appendChild(opt);
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const errorBox = document.getElementById('formError');
+            errorBox.textContent = '';
+
+            const password = document.getElementById('password').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const errors = [];
+
+            if (password.length < 6) errors.push('Password must be at least 6 characters.');
+            if (!/^[0-9]{10}$/.test(phone)) errors.push('Phone number must be exactly 10 digits.');
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('Enter a valid email address.');
+
+            if (errors.length > 0) {
+                errorBox.textContent = errors.join(' ');
+                return;
+            }
+
+            const result = await DB.registerStudent({
+                fullName: document.getElementById('fullName').value,
+                email, password,
+                phone,
+                gender: document.getElementById('gender').value,
+                address: document.getElementById('address').value,
+                courseId: Number(document.getElementById('courseId').value)
+            });
+
+            if (result.success) {
+                window.location.href = 'login.html?registered=true';
+            } else {
+                errorBox.textContent = result.message;
+            }
+        });
+    </script>
+</body>
+</html>
