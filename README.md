@@ -1,4 +1,4 @@
-# 🎓 Student Management System (Live Demo)
+# 🎓 Student Management System 🎓 
 
 A frontend-only live demo of the **Student Management System** that simulates the complete student management workflow. The application is designed for deployment on static hosting platforms like **Netlify** and **GitHub Pages**, allowing recruiters to explore the interface without requiring a backend server.
 
@@ -113,23 +113,24 @@ Instead of connecting to a real database, this project stores data in:
 
 This makes the application fully functional on static hosting platforms while simulating real CRUD operations.
 
----
-
 ## 📸 Screenshots
 
 Add screenshots of:
-<img width="1912" height="982" alt="image" src="https://github.com/user-attachments/assets/64553e87-b4b4-4419-bdb0-4ebcc472d2fa" />
-
-
 - Home Page
+<img width="1912" height="982" alt="image" src="https://github.com/user-attachments/assets/64553e87-b4b4-4419-bdb0-4ebcc472d2fa" />
 - Login Page
+<img width="1883" height="960" alt="image" src="https://github.com/user-attachments/assets/8e274c35-0ea8-464d-905c-34344378eb09" />
 - Admin Dashboard
+- <img width="1898" height="966" alt="image" src="https://github.com/user-attachments/assets/f42789dc-6faf-4c3b-842d-3ac83adab36c" />
 - Student Dashboard
+- <img width="1895" height="967" alt="image" src="https://github.com/user-attachments/assets/e78a4e5e-5b09-4802-ab75-6e1346a13ae1" />
 - Manage Students
+- <img width="1912" height="982" alt="image" src="https://github.com/user-attachments/assets/7a4ea94f-a906-4421-96bd-a105def90064" />
 - Attendance
+- <img width="1911" height="977" alt="image" src="https://github.com/user-attachments/assets/18b3d2cd-e4f3-423f-af19-13dba072f1a0" />
 - Marks Management
+- <img width="1907" height="977" alt="image" src="https://github.com/user-attachments/assets/774f85ef-cc1f-4738-bf71-9eb034109e05" />
 
----
 
 ## 🚀 Deployment
 
